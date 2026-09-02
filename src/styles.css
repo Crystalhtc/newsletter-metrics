@@ -1,0 +1,529 @@
+:root {
+  --charcoal: #2a2827;
+  --moss: #e6ffa7;
+  --surface: #ffffff;
+  --surface-strong: #ffffff;
+  --line: rgba(42, 40, 39, 0.18);
+  --muted: rgba(42, 40, 39, 0.66);
+
+  color: var(--charcoal);
+  background: var(--surface);
+  font-family: "Basel Grotesk", Arial, Helvetica, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: var(--surface);
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+.dropzone:focus-visible {
+  outline: 3px solid var(--moss);
+  outline-offset: 2px;
+}
+
+.mail-log {
+  width: min(960px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 28px 0 64px;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: flex-end;
+  background: var(--charcoal);
+  color: var(--surface-strong);
+  padding: 28px;
+  margin-bottom: 24px;
+  position: relative;
+}
+
+h1,
+h2 {
+  color: var(--charcoal);
+  font-family: "Basel Classic Black", "Basel Classic", Georgia, serif;
+  font-weight: 900;
+  margin: 0;
+}
+
+h1 {
+  color: var(--surface-strong);
+  font-size: 46px;
+  line-height: 1;
+}
+
+h2 {
+  font-size: 24px;
+  margin-bottom: 14px;
+}
+
+p {
+  margin: 0;
+}
+
+.brand-label {
+  color: var(--moss);
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.topbar p:not(.brand-label) {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 15px;
+  line-height: 1.45;
+  margin-top: 10px;
+  max-width: 640px;
+}
+
+.brand-mark {
+  border: 2px solid var(--moss);
+  color: var(--moss);
+  display: grid;
+  flex: 0 0 auto;
+  font-weight: 800;
+  line-height: 0.95;
+  padding: 12px 14px;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.brand-mark span {
+  display: block;
+  font-size: 16px;
+}
+
+.brand-mark span:first-child {
+  font-size: 32px;
+}
+
+.upload-panel,
+.trend-section,
+.ledger-section {
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.upload-panel {
+  margin-bottom: 28px;
+  padding: 24px;
+}
+
+.date-row,
+.action-row,
+.preview-footer,
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.date-row {
+  margin-bottom: 18px;
+}
+
+.date-row span,
+.status-text,
+.replace-note,
+.preview-panel p,
+th,
+.legend,
+.empty-state {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.date-row select {
+  appearance: none;
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  color: var(--charcoal);
+  min-height: 38px;
+  padding: 8px 30px 8px 10px;
+}
+
+.replace-note {
+  color: var(--charcoal);
+  font-weight: 700;
+}
+
+.dropzone {
+  min-height: 280px;
+  border: 2px dashed var(--line);
+  border-radius: 8px;
+  background: var(--surface-strong);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  position: relative;
+  text-align: center;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.dropzone.drag,
+.dropzone:hover {
+  border-color: var(--charcoal);
+  background: var(--moss);
+}
+
+.dropzone input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+
+.dropzone img {
+  width: 100%;
+  max-height: 280px;
+  object-fit: contain;
+  display: block;
+}
+
+.drop-message {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  padding: 28px 16px;
+}
+
+.upload-icon {
+  align-items: center;
+  background: var(--moss);
+  border-radius: 50%;
+  color: var(--charcoal);
+  display: inline-flex;
+  font-size: 24px;
+  height: 44px;
+  justify-content: center;
+  line-height: 1;
+  width: 44px;
+}
+
+.drop-message span:not(.upload-icon) {
+  color: var(--charcoal);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.drop-message small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.action-row {
+  margin-top: 16px;
+}
+
+.primary-button,
+.ghost-button,
+.icon-button {
+  border-radius: 3px;
+  min-height: 38px;
+}
+
+.primary-button {
+  background: var(--moss);
+  border: 1px solid var(--moss);
+  color: var(--charcoal);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  gap: 8px;
+  padding: 8px 18px;
+}
+
+.primary-button:hover {
+  background: var(--moss);
+}
+
+.ghost-button {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--charcoal);
+  font-weight: 700;
+  padding: 7px 12px;
+}
+
+.ghost-button:hover,
+.icon-button:hover {
+  border-color: var(--charcoal);
+  color: var(--charcoal);
+}
+
+.status-text {
+  color: var(--charcoal);
+  font-weight: 600;
+}
+
+.preview-panel {
+  border-top: 1px solid var(--line);
+  margin-top: 20px;
+  padding-top: 18px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+th {
+  font-weight: 700;
+  text-align: left;
+}
+
+th,
+td {
+  border-top: 1px solid var(--line);
+  padding: 11px 14px;
+}
+
+thead tr:first-child th {
+  border-top: 0;
+}
+
+tbody tr:hover {
+  background: rgba(230, 255, 167, 0.36);
+}
+
+td input {
+  width: 100%;
+  min-width: 116px;
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  color: var(--charcoal);
+  padding: 8px 10px;
+}
+
+.row-actions {
+  text-align: right;
+  width: 46px;
+}
+
+.icon-button {
+  width: 32px;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  display: inline-grid;
+  font-size: 20px;
+  line-height: 1;
+  place-items: center;
+}
+
+.preview-footer {
+  border-top: 1px solid var(--line);
+  margin-top: 12px;
+  padding-top: 16px;
+}
+
+.metric {
+  min-width: 148px;
+}
+
+.metric span {
+  color: var(--muted);
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.metric strong {
+  color: var(--charcoal);
+  display: block;
+  font-family: "Basel Classic Black", "Basel Classic", Georgia, serif;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.metric.green strong,
+.green-text {
+  color: var(--charcoal);
+  font-weight: 700;
+}
+
+.metric.red strong,
+.red-text {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.trend-section,
+.ledger-section {
+  margin-bottom: 28px;
+  padding: 22px;
+}
+
+.empty-state {
+  border: 1px dashed var(--line);
+  border-radius: 6px;
+  padding: 32px;
+  text-align: center;
+}
+
+.empty-state.compact {
+  padding: 20px;
+}
+
+.line-chart {
+  border: 1px solid var(--line);
+  overflow-x: auto;
+}
+
+.line-chart svg {
+  display: block;
+  min-width: 640px;
+  width: 100%;
+}
+
+.grid-line {
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.axis-line {
+  stroke: var(--charcoal);
+  stroke-width: 1;
+}
+
+.trend-path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 3;
+}
+
+.trend-path.open,
+.trend-dot.open {
+  stroke: var(--charcoal);
+}
+
+.trend-path.ctr,
+.trend-dot.ctr {
+  stroke: var(--charcoal);
+}
+
+.trend-path.ctr {
+  stroke: var(--moss);
+}
+
+.trend-dot {
+  fill: var(--surface-strong);
+  stroke-width: 2;
+}
+
+.trend-dot.ctr {
+  fill: var(--moss);
+}
+
+.open-dot {
+  background: var(--charcoal);
+}
+
+.ctr-dot {
+  background: var(--moss);
+  border: 1px solid var(--charcoal);
+}
+
+.chart-label {
+  fill: var(--muted);
+  font-family: "Basel Grotesk", Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+
+.legend {
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.legend i {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+@media (max-width: 700px) {
+  .mail-log {
+    width: min(100% - 24px, 960px);
+    padding-top: 18px;
+  }
+
+  .topbar {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 22px;
+  }
+
+  h1 {
+    font-size: 36px;
+  }
+
+  .brand-mark {
+    width: 100%;
+  }
+
+  .upload-panel,
+  .trend-section,
+  .ledger-section {
+    padding: 16px;
+  }
+
+  .dropzone {
+    min-height: 220px;
+  }
+
+  .preview-footer {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .metric {
+    min-width: 0;
+  }
+}
