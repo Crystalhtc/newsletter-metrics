@@ -1,8 +1,8 @@
 :root {
   --charcoal: #2a2827;
   --moss: #e6ffa7;
-  --surface: #ffffff;
-  --surface-strong: #ffffff;
+  --surface: var(--charcoal);
+  --surface-strong: var(--moss);
   --line: rgba(42, 40, 39, 0.18);
   --muted: rgba(42, 40, 39, 0.66);
 
@@ -23,13 +23,14 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background: var(--surface);
+  background: var(--charcoal);
 }
 
 button,
 input,
 select {
   font: inherit;
+  border-radius: 100px;
 }
 
 button {
@@ -61,10 +62,11 @@ select:focus-visible,
   gap: 24px;
   align-items: flex-end;
   background: var(--charcoal);
-  color: var(--surface-strong);
+  color: #ffffff;
   padding: 28px;
   margin-bottom: 24px;
   position: relative;
+  border-radius: 10px;
 }
 
 h1,
@@ -76,7 +78,7 @@ h2 {
 }
 
 h1 {
-  color: var(--surface-strong);
+  color: #ffffff;
   font-size: 46px;
   line-height: 1;
 }
@@ -116,6 +118,7 @@ p {
   padding: 12px 14px;
   text-align: left;
   text-transform: uppercase;
+  border-radius: 10px;
 }
 
 .brand-mark span {
@@ -127,12 +130,58 @@ p {
   font-size: 32px;
 }
 
+.view-toggle {
+  background: var(--moss);
+  border: 1px solid var(--moss);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(132px, 1fr));
+  margin: 0 auto 24px;
+  padding: 2px;
+  position: relative;
+  width: fit-content;
+  border-radius: 100px;
+}
+
+.view-toggle::before {
+  content: "";
+  background: var(--charcoal);
+  border-radius: 100px;
+  bottom: 2px;
+  left: 2px;
+  position: absolute;
+  top: 2px;
+  transform: translateX(0);
+  transition: transform 0.22s ease;
+  width: calc((100% - 4px) / 2);
+}
+
+.view-toggle.stories::before {
+  transform: translateX(100%);
+}
+
+.view-toggle button {
+  background: transparent;
+  border: 0;
+  color: var(--charcoal);
+  font-weight: 800;
+  min-height: 42px;
+  min-width: 132px;
+  padding: 8px 18px;
+  position: relative;
+  z-index: 1;
+  border-radius: 100px;
+}
+
+.view-toggle button.active {
+  color: var(--moss);
+}
+
 .upload-panel,
 .trend-section,
 .ledger-section {
-  background: var(--surface-strong);
-  border: 1px solid var(--line);
-  border-radius: 8px;
+  background: var(--moss);
+  border: 1px solid var(--moss);
+  border-radius: 10px;
 }
 
 .upload-panel {
@@ -154,6 +203,23 @@ p {
   margin-bottom: 18px;
 }
 
+.audience-field {
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.audience-field select {
+  background: #ffffff;
+  border: 1px solid var(--line);
+  color: var(--charcoal);
+  min-height: 38px;
+  min-width: 220px;
+  padding: 8px 10px;
+}
+
 .date-row span,
 .status-text,
 .replace-note,
@@ -167,9 +233,8 @@ th,
 
 .date-row select {
   appearance: none;
-  background: var(--surface-strong);
+  background: #ffffff;
   border: 1px solid var(--line);
-  border-radius: 3px;
   color: var(--charcoal);
   min-height: 38px;
   padding: 8px 30px 8px 10px;
@@ -183,8 +248,7 @@ th,
 .dropzone {
   min-height: 280px;
   border: 2px dashed var(--line);
-  border-radius: 8px;
-  background: var(--surface-strong);
+  background: #ffffff;
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -196,7 +260,7 @@ th,
 .dropzone.drag,
 .dropzone:hover {
   border-color: var(--charcoal);
-  background: var(--moss);
+  background: #ffffff;
 }
 
 .dropzone input {
@@ -221,9 +285,9 @@ th,
 
 .upload-icon {
   align-items: center;
-  background: var(--moss);
+  background: var(--charcoal);
   border-radius: 50%;
-  color: var(--charcoal);
+  color: var(--moss);
   display: inline-flex;
   font-size: 24px;
   height: 44px;
@@ -250,14 +314,14 @@ th,
 .primary-button,
 .ghost-button,
 .icon-button {
-  border-radius: 3px;
+  border-radius: 100px;
   min-height: 38px;
 }
 
 .primary-button {
-  background: var(--moss);
-  border: 1px solid var(--moss);
-  color: var(--charcoal);
+  background: var(--charcoal);
+  border: 1px solid var(--charcoal);
+  color: var(--moss);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -267,7 +331,7 @@ th,
 }
 
 .primary-button:hover {
-  background: var(--moss);
+  background: var(--charcoal);
 }
 
 .ghost-button {
@@ -293,6 +357,10 @@ th,
   border-top: 1px solid var(--line);
   margin-top: 20px;
   padding-top: 18px;
+}
+
+.preview-panel.inner {
+  margin-top: 18px;
 }
 
 .table-wrap {
@@ -328,11 +396,18 @@ tbody tr:hover {
 td input {
   width: 100%;
   min-width: 116px;
-  background: var(--surface-strong);
+  background: #ffffff;
   border: 1px solid var(--line);
-  border-radius: 3px;
+  border-radius: 10px;
   color: var(--charcoal);
   padding: 8px 10px;
+}
+
+td a {
+  color: var(--charcoal);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
 }
 
 .row-actions {
@@ -396,9 +471,21 @@ td input {
   padding: 22px;
 }
 
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.section-head h2 {
+  margin-bottom: 0;
+}
+
 .empty-state {
   border: 1px dashed var(--line);
-  border-radius: 6px;
+  border-radius: 10px;
   padding: 32px;
   text-align: center;
 }
@@ -408,7 +495,9 @@ td input {
 }
 
 .line-chart {
-  border: 1px solid var(--line);
+  background: var(--moss);
+  border: 1px solid var(--charcoal);
+  border-radius: 10px;
   overflow-x: auto;
 }
 
@@ -446,16 +535,16 @@ td input {
 }
 
 .trend-path.ctr {
-  stroke: var(--moss);
+  stroke: #ffffff;
 }
 
 .trend-dot {
-  fill: var(--surface-strong);
+  fill: var(--moss);
   stroke-width: 2;
 }
 
 .trend-dot.ctr {
-  fill: var(--moss);
+  fill: #ffffff;
 }
 
 .open-dot {
@@ -463,7 +552,7 @@ td input {
 }
 
 .ctr-dot {
-  background: var(--moss);
+  background: #ffffff;
   border: 1px solid var(--charcoal);
 }
 
@@ -475,6 +564,15 @@ td input {
   text-anchor: middle;
 }
 
+.y-axis-label {
+  dominant-baseline: middle;
+  fill: var(--muted);
+  font-family: "Basel Grotesk", Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  text-anchor: end;
+}
+
 .legend {
   justify-content: center;
   margin-top: 12px;
@@ -483,7 +581,7 @@ td input {
 .legend i {
   width: 10px;
   height: 10px;
-  border-radius: 2px;
+  border-radius: 10px;
   display: inline-block;
   margin-right: 6px;
 }
@@ -500,6 +598,17 @@ td input {
     padding: 22px;
   }
 
+  .view-toggle {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    width: 100%;
+  }
+
+  .view-toggle button {
+    min-width: 0;
+    width: 100%;
+  }
+
   h1 {
     font-size: 36px;
   }
@@ -508,10 +617,25 @@ td input {
     width: 100%;
   }
 
+  .audience-field {
+    align-items: flex-start;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .audience-field select {
+    width: 100%;
+  }
+
   .upload-panel,
   .trend-section,
   .ledger-section {
     padding: 16px;
+  }
+
+  .section-head {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .dropzone {
