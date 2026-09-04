@@ -97,7 +97,7 @@ p {
   font-size: 13px;
   font-weight: 700;
   margin-bottom: 8px;
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
 }
 
 .topbar p:not(.brand-label) {
@@ -189,6 +189,12 @@ p {
   padding: 24px;
 }
 
+.pdf-upload-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .date-row,
 .action-row,
 .preview-footer,
@@ -217,7 +223,7 @@ p {
   color: var(--charcoal);
   min-height: 38px;
   min-width: 220px;
-  padding: 8px 10px;
+  padding: 8px 34px 8px 10px;
 }
 
 .date-row span,
@@ -233,11 +239,13 @@ th,
 
 .date-row select {
   appearance: none;
-  background: #ffffff;
-  border: 1px solid var(--line);
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%232a2827' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+    no-repeat right 14px center;
+  border: 1px solid var(--charcoal);
   color: var(--charcoal);
   min-height: 38px;
-  padding: 8px 30px 8px 10px;
+  padding: 8px 34px 8px 10px;
 }
 
 .replace-note {
@@ -255,6 +263,10 @@ th,
   position: relative;
   text-align: center;
   transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.pdf-dropzone {
+  min-height: 180px;
 }
 
 .dropzone.drag,
@@ -311,9 +323,88 @@ th,
   margin-top: 16px;
 }
 
+.confirm-panel {
+  border-top: 1px solid var(--line);
+  margin-top: 22px;
+  padding-top: 20px;
+}
+
+.confirm-copy {
+  margin-bottom: 14px;
+}
+
+.confirm-copy h2 {
+  color: var(--charcoal);
+  font-size: 20px;
+  margin: 0 0 4px;
+}
+
+.confirm-copy p {
+  color: var(--muted);
+  font-size: 13px;
+  margin: 0;
+}
+
+.confirm-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.confirm-card {
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.confirm-card > div:first-child {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 14px;
+}
+
+.confirm-card span,
+.confirm-card dt {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.confirm-card strong {
+  color: var(--charcoal);
+  font-size: 15px;
+  overflow-wrap: anywhere;
+}
+
+.confirm-card dl {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+}
+
+.confirm-card dl div {
+  display: grid;
+  gap: 3px;
+}
+
+.confirm-card dd {
+  color: var(--charcoal);
+  font-size: 18px;
+  font-weight: 800;
+  margin: 0;
+}
+
+.confirm-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
 .primary-button,
-.ghost-button,
-.icon-button {
+.ghost-button {
   border-radius: 100px;
   min-height: 38px;
 }
@@ -335,17 +426,16 @@ th,
 }
 
 .ghost-button {
-  background: transparent;
-  border: 1px solid var(--line);
-  color: var(--charcoal);
+  background: var(--charcoal);
+  color: var(--moss);
   font-weight: 700;
   padding: 7px 12px;
+  border: none;
 }
 
 .ghost-button:hover,
 .icon-button:hover {
-  border-color: var(--charcoal);
-  color: var(--charcoal);
+  opacity: 0.95;
 }
 
 .status-text {
@@ -369,7 +459,7 @@ th,
 
 table {
   width: 100%;
-  min-width: 560px;
+  min-width: 720px;
   border-collapse: collapse;
   font-size: 14px;
 }
@@ -410,6 +500,124 @@ td a {
   text-underline-offset: 2px;
 }
 
+.cell-with-action,
+.date-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cell-with-action {
+  min-width: 150px;
+}
+
+.cell-with-action span {
+  overflow-wrap: anywhere;
+}
+
+.date-controls select,
+.modal-field select {
+  appearance: none;
+  background:
+    #ffffff
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%232a2827' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+    no-repeat right 10px center;
+  border: 1px solid var(--line);
+  border-radius: 100px;
+  color: var(--charcoal);
+  min-height: 34px;
+  padding: 6px 28px 6px 10px;
+}
+
+.date-controls select:first-child {
+  min-width: 110px;
+}
+
+.date-controls select:last-child {
+  min-width: 84px;
+}
+
+.edit-icon-button {
+  align-items: center;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 100px;
+  color: var(--charcoal);
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-size: 17px;
+  height: 30px;
+  justify-content: center;
+  line-height: 1;
+  min-height: 30px;
+  padding: 0;
+  width: 30px;
+}
+
+.edit-icon-button:hover {
+  border-color: var(--charcoal);
+}
+
+.modal-backdrop {
+  align-items: center;
+  background: rgba(42, 40, 39, 0.72);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: 24px;
+  position: fixed;
+  z-index: 20;
+}
+
+.modal {
+  background: var(--moss);
+  border: 1px solid var(--charcoal);
+  border-radius: 10px;
+  box-shadow: 0 18px 50px rgba(42, 40, 39, 0.3);
+  color: var(--charcoal);
+  display: grid;
+  gap: 14px;
+  max-width: 420px;
+  padding: 22px;
+  width: min(100%, 420px);
+}
+
+.modal h2 {
+  margin: 0;
+}
+
+.modal-field {
+  color: var(--muted);
+  display: grid;
+  font-size: 13px;
+  font-weight: 700;
+  gap: 6px;
+}
+
+.modal-field input,
+.modal-field select {
+  background-color: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--charcoal);
+  min-height: 42px;
+  padding: 9px 12px;
+  width: 100%;
+}
+
+.modal-field select {
+  border-radius: 100px;
+  padding-right: 34px;
+}
+
+.modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
 .row-actions {
   text-align: right;
   width: 46px;
@@ -417,6 +625,7 @@ td a {
 
 .icon-button {
   width: 32px;
+  height: 32px;
   background: transparent;
   border: 1px solid var(--line);
   color: var(--muted);
@@ -481,6 +690,14 @@ td a {
 
 .section-head h2 {
   margin-bottom: 0;
+}
+
+.download-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
 }
 
 .empty-state {
@@ -631,6 +848,14 @@ td a {
   .trend-section,
   .ledger-section {
     padding: 16px;
+  }
+
+  .pdf-upload-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .confirm-grid {
+    grid-template-columns: 1fr;
   }
 
   .section-head {
