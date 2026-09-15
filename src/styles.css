@@ -195,6 +195,10 @@ p {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.upload-step-copy {
+  margin-bottom: 16px;
+}
+
 .date-row,
 .action-row,
 .preview-footer,
@@ -206,7 +210,50 @@ p {
 }
 
 .date-row {
-  margin-bottom: 18px;
+  margin-top: 16px;
+}
+
+.date-step {
+  margin: 22px 0 18px;
+}
+
+.date-step-copy {
+  margin-bottom: 16px;
+}
+
+.date-step h2 {
+  font-size: 28px;
+  line-height: 1.05;
+  margin-bottom: 8px;
+}
+
+.date-step p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.step-kicker {
+  background: var(--charcoal);
+  color: var(--moss);
+  display: inline-flex;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0;
+  margin-bottom: 10px;
+  padding: 5px 10px;
+  text-transform: uppercase;
+  border-radius: 100px;
+}
+
+.date-row label {
+  color: var(--charcoal);
+  display: grid;
+  flex: 1 1 220px;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 900;
+  text-transform: uppercase;
 }
 
 .audience-field {
@@ -244,8 +291,11 @@ th,
     no-repeat right 14px center;
   border: 1px solid var(--charcoal);
   color: var(--charcoal);
-  min-height: 38px;
-  padding: 8px 34px 8px 10px;
+  font-size: 17px;
+  font-weight: 800;
+  min-height: 54px;
+  padding: 12px 42px 12px 16px;
+  width: 100%;
 }
 
 .replace-note {
@@ -752,7 +802,7 @@ td a {
 }
 
 .trend-path.ctr {
-  stroke: #ffffff;
+  stroke: #FF7A65;
 }
 
 .trend-dot {
@@ -761,7 +811,7 @@ td a {
 }
 
 .trend-dot.ctr {
-  fill: #ffffff;
+  fill: #FF7A65;
 }
 
 .open-dot {
@@ -769,7 +819,7 @@ td a {
 }
 
 .ctr-dot {
-  background: #ffffff;
+  background: #FF7A65;
   border: 1px solid var(--charcoal);
 }
 
@@ -781,13 +831,36 @@ td a {
   text-anchor: middle;
 }
 
+.axis-title {
+  fill: var(--charcoal);
+  font-family: "Basel Grotesk", Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.axis-title.left {
+  text-anchor: start;
+}
+
+.axis-title.right {
+  text-anchor: end;
+}
+
 .y-axis-label {
   dominant-baseline: middle;
   fill: var(--muted);
   font-family: "Basel Grotesk", Arial, Helvetica, sans-serif;
   font-size: 11px;
   font-weight: 700;
+}
+
+.y-axis-label.left {
   text-anchor: end;
+}
+
+.y-axis-label.right {
+  text-anchor: start;
 }
 
 .legend {

@@ -31,6 +31,17 @@ function entryLabel(year, month) {
   return `${MONTHS[month].slice(0, 3)} '${String(year).slice(2)}`;
 }
 
+function monthValue(row) {
+  if (Number.isInteger(row.year) && Number.isInteger(row.month)) {
+    return row.year * 12 + row.month;
+  }
+  if (typeof row.id === "string") {
+    const match = row.id.match(/^(\d{4})-(\d{2})/);
+    if (match) return Number(match[1]) * 12 + Number(match[2]) - 1;
+  }
+  return -Infinity;
+}
+
 function pct(value) {
   return Number.isFinite(value) ? `${value.toFixed(2)}%` : "-";
 }
@@ -448,7 +459,7 @@ function topStories(rows) {
     )
     .sort(
       (a, b) =>
-        storyMonth(a).localeCompare(storyMonth(b)) ||
+        monthValue(b) - monthValue(a) ||
         String(a.audience || "").localeCompare(String(b.audience || "")) ||
         Number(b.uniqueClicks) - Number(a.uniqueClicks)
     );
@@ -525,20 +536,23 @@ function downloadStoriesPdf(rows) {
 export default function App() {
   const now = new Date();
   const [activeTab, setActiveTab] = useState("metrics");
-  const [month, setMonth] = useState(now.getMonth());
-  const [year, setYear] = useState(now.getFullYear());
+  const [month, setMonth] = useState("");
+  const [year, setYear] = useState("");
   const [entries, setEntries] = useState(getStoredEntries);
   const [stories, setStories] = useState(getStoredStories);
   const [statuses, setStatuses] = useState({});
   const [pendingReports, setPendingReports] = useState({});
 
   const sortedEntries = useMemo(
-    () => [...entries].sort((a, b) => a.id.localeCompare(b.id)),
+    () => [...entries].sort((a, b) => monthValue(a) - monthValue(b)),
     [entries]
   );
   const topStoryRows = useMemo(() => topStories(stories), [stories]);
   const pendingCount = Object.keys(pendingReports).length;
-  const canConfirmReports = AUDIENCES.every((audience) => pendingReports[audience]);
+  const hasReportDate = month !== "" && year !== "";
+  const canConfirmReports =
+    hasReportDate && AUDIENCES.every((audience) => pendingReports[audience]);
+  const pendingMonthLabel = hasReportDate ? entryLabel(year, month) : "selected month";
 
   function persistEntries(nextEntries) {
     setEntries(nextEntries);
@@ -710,32 +724,9 @@ export default function App() {
       </header>
 
       <section className="upload-panel" aria-label="Upload PDF reports">
-        <div className="date-row">
-          <span>This report covers</span>
-          <select
-            value={month}
-            onChange={(event) => setMonth(Number(event.target.value))}
-            aria-label="Month"
-          >
-            {MONTHS.map((name, index) => (
-              <option key={name} value={index}>
-                {name}
-              </option>
-            ))}
-          </select>
-          <select
-            value={year}
-            onChange={(event) => setYear(Number(event.target.value))}
-            aria-label="Year"
-          >
-            {Array.from({ length: 6 }, (_, index) => now.getFullYear() - 3 + index).map(
-              (item) => (
-                <option key={item} value={item}>
-                  {item}
-                </option>
-              )
-            )}
-          </select>
+        <div className="upload-step-copy">
+          <span className="step-kicker">Step 1</span>
+          <h2>Upload PDF reports</h2>
         </div>
 
         <div className="pdf-upload-grid">
@@ -750,9 +741,57 @@ export default function App() {
         </div>
 
         {pendingCount > 0 ? (
+          <div className="date-step">
+            <div className="date-step-copy">
+              <span className="step-kicker">Step 2</span>
+              <h2>Choose report month and year</h2>
+              <p>The upload cannot be saved until both fields are selected.</p>
+            </div>
+            <div className="date-row">
+              <label>
+                Month
+                <select
+                  value={month}
+                  onChange={(event) =>
+                    setMonth(event.target.value === "" ? "" : Number(event.target.value))
+                  }
+                  aria-label="Month"
+                >
+                  <option value="">Choose month</option>
+                  {MONTHS.map((name, index) => (
+                    <option key={name} value={index}>
+                      {name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Year
+                <select
+                  value={year}
+                  onChange={(event) =>
+                    setYear(event.target.value === "" ? "" : Number(event.target.value))
+                  }
+                  aria-label="Year"
+                >
+                  <option value="">Choose year</option>
+                  {Array.from({ length: 6 }, (_, index) => now.getFullYear() - 3 + index).map(
+                    (item) => (
+                      <option key={item} value={item}>
+                        {item}
+                      </option>
+                    )
+                  )}
+                </select>
+              </label>
+            </div>
+          </div>
+        ) : null}
+
+        {pendingCount > 0 ? (
           <ConfirmImportPanel
             canConfirm={canConfirmReports}
-            monthLabel={entryLabel(year, month)}
+            monthLabel={pendingMonthLabel}
             onClear={clearPendingReports}
             onConfirm={confirmPendingReports}
             reports={pendingReports}
@@ -896,7 +935,9 @@ function ConfirmImportPanel({ canConfirm, monthLabel, onClear, onConfirm, report
           Clear uploads
         </button>
         {!canConfirm ? (
-          <span className="status-text">Upload both audience PDFs to continue.</span>
+          <span className="status-text">
+            Upload both audience PDFs and choose month/year to continue.
+          </span>
         ) : null}
       </div>
     </div>
@@ -986,6 +1027,8 @@ function DateControls({ month, year, onChange, label }) {
 }
 
 function MetricsView({ entries, onDateChange, onDelete }) {
+  const tableEntries = [...entries].sort((a, b) => monthValue(b) - monthValue(a));
+
   return (
     <>
       <section className="ledger-section">
@@ -1000,14 +1043,14 @@ function MetricsView({ entries, onDateChange, onDelete }) {
             >
               Download CSV
             </button>
-            <button
+            {/* <button
               className="ghost-button"
               type="button"
               disabled={entries.length === 0}
               onClick={() => downloadMetricsPdf(entries)}
             >
               Download PDF
-            </button>
+            </button> */}
           </div>
         </div>
         {entries.length === 0 ? (
@@ -1025,7 +1068,7 @@ function MetricsView({ entries, onDateChange, onDelete }) {
                 </tr>
               </thead>
               <tbody>
-                {entries.map((entry) => (
+                {tableEntries.map((entry) => (
                   <tr key={entry.id}>
                     <td>
                       <DateControls
@@ -1246,13 +1289,25 @@ export function StoriesTable({
 export function TrendLineChart({ entries }) {
   const width = 760;
   const height = 260;
-  const padding = { top: 18, right: 28, bottom: 42, left: 58 };
-  const values = entries.flatMap((entry) => [entry.openRate, entry.ctr]);
-  const tickStep = 5;
-  const maxValue = Math.max(tickStep, Math.ceil(Math.max(...values) / tickStep) * tickStep);
-  const yTicks = Array.from(
-    { length: maxValue / tickStep },
-    (_, index) => maxValue - index * tickStep
+  const padding = { top: 28, right: 62, bottom: 42, left: 62 };
+  const openTickStep = 10;
+  const ctrTickStep = 1;
+  const openMax = Math.max(
+    openTickStep,
+    Math.ceil(Math.max(...entries.map((entry) => entry.openRate)) / openTickStep) *
+      openTickStep
+  );
+  const ctrMax = Math.max(
+    4,
+    Math.ceil(Math.max(...entries.map((entry) => entry.ctr)) / ctrTickStep) * ctrTickStep
+  );
+  const openTicks = Array.from(
+    { length: openMax / openTickStep },
+    (_, index) => openMax - index * openTickStep
+  );
+  const ctrTicks = Array.from(
+    { length: ctrMax / ctrTickStep },
+    (_, index) => ctrMax - index * ctrTickStep
   );
   const plotWidth = width - padding.left - padding.right;
   const plotHeight = height - padding.top - padding.bottom;
@@ -1262,13 +1317,21 @@ export function TrendLineChart({ entries }) {
     return padding.left + (index / (entries.length - 1)) * plotWidth;
   }
 
-  function yFor(value) {
-    return padding.top + plotHeight - (value / maxValue) * plotHeight;
+  function yForOpen(value) {
+    return padding.top + plotHeight - (value / openMax) * plotHeight;
+  }
+
+  function yForCtr(value) {
+    return padding.top + plotHeight - (value / ctrMax) * plotHeight;
   }
 
   function pathFor(key) {
+    const yForMetric = key === "ctr" ? yForCtr : yForOpen;
     return entries
-      .map((entry, index) => `${index === 0 ? "M" : "L"} ${xFor(index)} ${yFor(entry[key])}`)
+      .map(
+        (entry, index) =>
+          `${index === 0 ? "M" : "L"} ${xFor(index)} ${yForMetric(entry[key])}`
+      )
       .join(" ");
   }
 
@@ -1276,11 +1339,17 @@ export function TrendLineChart({ entries }) {
     <div className="line-chart" aria-label="Saved monthly metric line chart">
       <svg viewBox={`0 0 ${width} ${height}`} role="img">
         <title>Open rate and CTR trend by saved month</title>
-        {yTicks.map((value) => {
-          const y = yFor(value);
+        <text className="axis-title left" x={padding.left} y={14}>
+          Open rate %
+        </text>
+        <text className="axis-title right" x={width - padding.right} y={14}>
+          CTR %
+        </text>
+        {openTicks.map((value) => {
+          const y = yForOpen(value);
           return (
-            <g key={value}>
-              <text className="y-axis-label" x={padding.left - 10} y={y}>
+            <g key={`open-${value}`}>
+              <text className="y-axis-label left" x={padding.left - 10} y={y}>
                 {value}
               </text>
               <line
@@ -1293,10 +1362,30 @@ export function TrendLineChart({ entries }) {
             </g>
           );
         })}
+        {ctrTicks.map((value) => {
+          const y = yForCtr(value);
+          return (
+            <text
+              className="y-axis-label right"
+              key={`ctr-${value}`}
+              x={width - padding.right + 10}
+              y={y}
+            >
+              {value}
+            </text>
+          );
+        })}
         <line
           className="axis-line"
           x1={padding.left}
           x2={padding.left}
+          y1={padding.top}
+          y2={height - padding.bottom}
+        />
+        <line
+          className="axis-line"
+          x1={width - padding.right}
+          x2={width - padding.right}
           y1={padding.top}
           y2={height - padding.bottom}
         />
@@ -1314,7 +1403,7 @@ export function TrendLineChart({ entries }) {
             <circle
               className="trend-dot open"
               cx={xFor(index)}
-              cy={yFor(entry.openRate)}
+              cy={yForOpen(entry.openRate)}
               r="4"
             >
               <title>{`${entry.label} open rate ${pct(entry.openRate)}`}</title>
@@ -1322,7 +1411,7 @@ export function TrendLineChart({ entries }) {
             <circle
               className="trend-dot ctr"
               cx={xFor(index)}
-              cy={yFor(entry.ctr)}
+              cy={yForCtr(entry.ctr)}
               r="4"
             >
               <title>{`${entry.label} CTR ${pct(entry.ctr)}`}</title>
