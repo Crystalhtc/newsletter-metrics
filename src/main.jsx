@@ -240,17 +240,80 @@ function storeStories(stories) {
 }
 
 function storyFromLink(link) {
+  const original = String(link || "").trim();
+  if (!original) return "-";
+
+  const cleaned = original.replace(/\.\.\.$/, "").replace(/\s+/g, "");
+
   try {
-    const url = new URL(link.replace("...", ""));
-    const parts = url.pathname.split("/").filter(Boolean);
-    const raw = parts.at(-1) || url.hostname.replace(/^www\./, "");
-    return raw
-      .replace(/\.\.\.$/, "")
-      .replace(/-/g, " ")
-      .replace(/\b\w/g, (char) => char.toUpperCase());
+    const url = new URL(cleaned);
+    const wrappedUrl = ["url", "u", "target", "redirect", "link"].reduce(
+      (found, key) => found || url.searchParams.get(key),
+      ""
+    );
+    if (wrappedUrl && /^https?:\/\//i.test(wrappedUrl)) {
+      return storyFromLink(wrappedUrl);
+    }
+
+    const parts = url.pathname
+      .split("/")
+      .map((part) => decodeURIComponent(part))
+      .filter(Boolean)
+      .filter((part) => !/^(blog|blogs|news|stories|story|articles|article|events)$/i.test(part))
+      .filter((part) => !/^\d{4}$/.test(part))
+      .filter((part) => !/^\d{1,2}$/.test(part));
+    const candidate =
+      [...parts].reverse().find((part) => /[a-z]/i.test(part) && !/^\d+$/.test(part)) ||
+      url.hostname.replace(/^www\./, "");
+
+    return titleFromSlug(candidate);
   } catch {
-    return link.replace(/^https?:\/\//, "").replace(/[-/]/g, " ");
+    return titleFromSlug(cleaned.replace(/^https?:\/\//i, ""));
   }
+}
+
+function titleFromSlug(value) {
+  const words = String(value || "")
+    .replace(/\.[a-z0-9]{2,5}$/i, "")
+    .replace(/[?#].*$/, "")
+    .replace(/[_+]+/g, "-")
+    .replace(/([a-z])([A-Z])/g, "$1-$2")
+    .split(/[-/\s]+/)
+    .map((word) => word.replace(/[^a-z0-9'&]/gi, ""))
+    .filter(Boolean)
+    .filter((word) => !/^\d+$/.test(word))
+    .filter((word) => !/^[a-f0-9]{8,}$/i.test(word));
+
+  if (words.length === 0) return "Untitled Story";
+
+  return words
+    .map((word) => {
+      const lower = word.toLowerCase();
+      if (["bc", "bcpf", "usa", "uk"].includes(lower)) return lower.toUpperCase();
+      return lower.replace(/^\w/, (char) => char.toUpperCase());
+    })
+    .join(" ");
+}
+
+function updateStoryField(story, field, value) {
+  if (field !== "link") {
+    return {
+      ...story,
+      [field]: value,
+      updatedAt: new Date().toISOString(),
+    };
+  }
+
+  const previousGuess = storyFromLink(story.link);
+  const shouldRefreshStory =
+    !story.story || story.story === previousGuess || story.story === "Untitled Story";
+
+  return {
+    ...story,
+    link: value,
+    story: shouldRefreshStory ? storyFromLink(value) : story.story,
+    updatedAt: new Date().toISOString(),
+  };
 }
 
 function parseNumber(value) {
@@ -701,14 +764,7 @@ export default function App() {
   function updateSavedStory(id, field, value) {
     persistStories(
       stories.map((story) =>
-        story.id === id
-          ? {
-              ...story,
-              [field]: value,
-              story: field === "link" && !story.story ? storyFromLink(value) : story.story,
-              updatedAt: new Date().toISOString(),
-            }
-          : story
+        story.id === id ? updateStoryField(story, field, value) : story
       )
     );
   }
@@ -1240,11 +1296,13 @@ export function StoriesTable({
               {row.showAudience && <td rowSpan={row.audienceSpan}>{row.audience}</td>}
               <td>
                 {onUpdate ? (
-                  <input
-                    aria-label={`Story name for ${row.link || row.id}`}
-                    value={row.story || storyFromLink(row.link)}
-                    onChange={(event) => onUpdate(row.id, "story", event.target.value)}
-                  />
+                  <div className="story-name-field">
+                    <input
+                      aria-label={`Story name for ${row.link || row.id}`}
+                      value={row.story || storyFromLink(row.link)}
+                      onChange={(event) => onUpdate(row.id, "story", event.target.value)}
+                    />
+                  </div>
                 ) : (
                   row.story || storyFromLink(row.link)
                 )}

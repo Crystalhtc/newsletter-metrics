@@ -289,7 +289,7 @@ th,
   background:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%232a2827' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
     no-repeat right 14px center;
-  border: 1px solid var(--charcoal);
+  border: 1px solid var(--line);
   color: var(--charcoal);
   font-size: 17px;
   font-weight: 800;
@@ -673,6 +673,17 @@ td a {
   width: 46px;
 }
 
+.story-name-field {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  min-width: 260px;
+}
+
+.story-name-field input {
+  min-width: 180px;
+}
+
 .icon-button {
   width: 32px;
   height: 32px;
@@ -798,20 +809,12 @@ td a {
 
 .trend-path.ctr,
 .trend-dot.ctr {
-  stroke: var(--charcoal);
-}
-
-.trend-path.ctr {
   stroke: #FF7A65;
 }
 
 .trend-dot {
   fill: var(--moss);
   stroke-width: 2;
-}
-
-.trend-dot.ctr {
-  fill: #FF7A65;
 }
 
 .open-dot {
