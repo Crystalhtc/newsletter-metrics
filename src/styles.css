@@ -788,6 +788,7 @@ td a {
   border: 1px solid var(--charcoal);
   border-radius: 10px;
   overflow-x: auto;
+  padding: 30px 0 20px;
 }
 
 .line-chart svg {
