@@ -1264,14 +1264,14 @@ function TopStoriesView({ rows, onDateChange, onDelete, onUpdate }) {
           >
             Download CSV
           </button>
-          <button
+          {/* <button
             className="ghost-button"
             type="button"
             disabled={rows.length === 0}
             onClick={() => downloadStoriesPdf(rows)}
           >
             Download PDF
-          </button>
+          </button> */}
         </div>
       </div>
       {rows.length === 0 ? (
