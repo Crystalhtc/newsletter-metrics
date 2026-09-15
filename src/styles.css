@@ -680,8 +680,19 @@ td a {
   min-width: 260px;
 }
 
-.story-name-field input {
+.story-name-field textarea {
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--charcoal);
+  font: inherit;
+  line-height: 1.35;
+  min-height: 38px;
   min-width: 180px;
+  overflow: hidden;
+  padding: 8px 10px;
+  resize: none;
+  width: 100%;
 }
 
 .icon-button {

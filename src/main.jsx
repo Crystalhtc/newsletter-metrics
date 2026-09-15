@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import * as pdfjsLib from "pdfjs-dist";
 import pdfWorkerUrl from "pdfjs-dist/build/pdf.worker.min.mjs?url";
@@ -1367,7 +1367,7 @@ export function StoriesTable({
               <td>
                 {onUpdate ? (
                   <div className="story-name-field">
-                    <input
+                    <AutoResizeTextarea
                       aria-label={`Story name for ${row.link || row.id}`}
                       value={row.story || storyFromLink(row.link)}
                       onChange={(event) => onUpdate(row.id, "story", event.target.value)}
@@ -1411,6 +1411,27 @@ export function StoriesTable({
         </tbody>
       </table>
     </div>
+  );
+}
+
+function AutoResizeTextarea({ value, onChange, ...props }) {
+  const textareaRef = useRef(null);
+
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+    textarea.style.height = "auto";
+    textarea.style.height = `${textarea.scrollHeight}px`;
+  }, [value]);
+
+  return (
+    <textarea
+      {...props}
+      ref={textareaRef}
+      rows={1}
+      value={value}
+      onChange={onChange}
+    />
   );
 }
 
