@@ -412,31 +412,94 @@ function parsePdfReport(pdfText) {
 
 function parseStoryRows(text) {
   const tableStart = findStoryTableStart(text);
-  const normalized = text
+  const tableText = text
     .slice(tableStart >= 0 ? tableStart : 0)
     .replace(/[“”]/g, '"')
-    .replace(/[|]/g, "/")
-    .replace(/\s+/g, " ")
-    .trim();
-  const chunks = normalized.match(/https?:\/\/.*?(?=\s+https?:\/\/|$)/gi) || [];
+    .replace(/[|]/g, "/");
+  const rows = rowsFromStoryTable(tableText);
 
-  return chunks
-    .map((chunk) => {
-      const match =
-        chunk.match(/^(.*?)\s+(\d{1,6})\s+\d{1,6}(?:\s|$)/) ||
-        chunk.match(/^(.*?)\s+(\d{1,6})(?:\s|$)/);
-      if (!match) return null;
-      const link = cleanPdfLink(match[1]);
+  return rows
+    .map((row) => {
+      const link = cleanPdfLink(row.linkText);
       if (!link || !isStoryReportLink(link)) return null;
 
       return {
         id: crypto.randomUUID(),
         link,
         story: storyFromLink(link),
-        uniqueClicks: Number(match[2]),
+        uniqueClicks: row.uniqueClicks,
       };
     })
     .filter(Boolean);
+}
+
+function rowsFromStoryTable(text) {
+  const lines = text
+    .split("\n")
+    .map((line) => line.replace(/\s+/g, " ").trim())
+    .filter(Boolean);
+  const rows = [];
+  let buffer = "";
+
+  for (const line of lines) {
+    if (/https?:\/\//i.test(line)) {
+      buffer = line;
+    } else if (buffer) {
+      buffer = `${buffer} ${line}`.trim();
+    } else {
+      continue;
+    }
+
+    const row = parseStoryTableRow(buffer);
+    if (row) {
+      rows.push(row);
+      buffer = "";
+    }
+  }
+
+  if (buffer) {
+    const row = parseStoryTableRow(buffer);
+    if (row) rows.push(row);
+  }
+
+  if (rows.length > 0) return rows;
+
+  const normalized = text.replace(/\s+/g, " ").trim();
+  return (normalized.match(/https?:\/\/.*?(?=\s+https?:\/\/|$)/gi) || [])
+    .map(parseStoryTableRow)
+    .filter(Boolean);
+}
+
+function parseStoryTableRow(rowText) {
+  const match =
+    rowText.match(/^(https?:\/\/.+?)\s+(\d{1,6})\s+\d{1,6}\s*$/i) ||
+    rowText.match(/^(https?:\/\/.+?)\s+(\d{1,6})\s*$/i);
+  if (match) {
+    return {
+      linkText: match[1],
+      uniqueClicks: Number(match[2]),
+    };
+  }
+
+  const leadingMatch =
+    rowText.match(/^(\d{1,6})\s+\d{1,6}\s+(https?:\/\/.+)$/i) ||
+    rowText.match(/^(\d{1,6})\s+(https?:\/\/.+)$/i);
+  if (leadingMatch) {
+    return {
+      linkText: leadingMatch[2],
+      uniqueClicks: Number(leadingMatch[1]),
+    };
+  }
+
+  const looseMatch = rowText.match(/(\d{1,6})\s+\d{1,6}\s+(https?:\/\/.+)$/i);
+  if (looseMatch) {
+    return {
+      linkText: looseMatch[2],
+      uniqueClicks: Number(looseMatch[1]),
+    };
+  }
+
+  return null;
 }
 
 function findStoryTableStart(text) {
@@ -460,11 +523,18 @@ function cleanPdfLink(link) {
 }
 
 function isStoryReportLink(link) {
-  const normalized = link.toLowerCase();
+  const normalized = String(link || "").toLowerCase();
   if (
+    normalized.includes("pardot") ||
+    normalized.includes("force.com") ||
     normalized.includes("salesforce.com") ||
     normalized.includes("articleview") ||
+    normalized.includes("/email/prospects") ||
     normalized.includes("/email/read") ||
+    normalized.includes("view=soft_bounced") ||
+    normalized.includes("view=hard_bounced") ||
+    normalized.includes("view=clicked") ||
+    normalized.includes("view=opened") ||
     normalized.includes("setup")
   ) {
     return false;
